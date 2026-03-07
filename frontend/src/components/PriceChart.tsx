@@ -21,13 +21,21 @@ interface PriceChartProps {
   ticker: Ticker;
 }
 
+const TIME_RANGES = [
+  { label: '5 min', value: 5 },
+  { label: '15 min', value: 15 },
+  { label: '30 min', value: 30 },
+  { label: '1 hour', value: 60 }
+];
+
 export function PriceChart({ ticker }: PriceChartProps) {
   const [data, setData] = useState<HistoricalDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState(60);
 
   useEffect(() => {
     setLoading(true);
-    fetchHistoricalData(ticker.symbol)
+    fetchHistoricalData(ticker.symbol, timeRange)
       .then(historicalData => {
         setData([...historicalData, {
           timestamp: ticker.timestamp,
@@ -40,7 +48,7 @@ export function PriceChart({ ticker }: PriceChartProps) {
         console.error('Failed to fetch historical data:', err);
         setLoading(false);
       });
-  }, [ticker.symbol]);
+  }, [ticker.symbol, timeRange]);
 
   useEffect(() => {
     setData(prev => [...prev.slice(-49), {
@@ -91,12 +99,25 @@ export function PriceChart({ ticker }: PriceChartProps) {
   return (
     <div className="price-chart">
       <div className="chart-header">
-        <h2>{ticker.symbol} - {ticker.name}</h2>
-        <div className="chart-price">
-          <span className="current-price">${ticker.price.toFixed(2)}</span>
-          <span className={`price-change ${ticker.change >= 0 ? 'positive' : 'negative'}`}>
-            {ticker.change >= 0 ? '+' : ''}{ticker.change.toFixed(2)} ({ticker.changePercent.toFixed(2)}%)
-          </span>
+        <div>
+          <h2>{ticker.symbol} - {ticker.name}</h2>
+          <div className="chart-price">
+            <span className="current-price">${ticker.price.toFixed(2)}</span>
+            <span className={`price-change ${ticker.change >= 0 ? 'positive' : 'negative'}`}>
+              {ticker.change >= 0 ? '+' : ''}{ticker.change.toFixed(2)} ({ticker.changePercent.toFixed(2)}%)
+            </span>
+          </div>
+        </div>
+        <div className="time-range-selector">
+          {TIME_RANGES.map(range => (
+            <button
+              key={range.value}
+              className={`range-btn ${timeRange === range.value ? 'active' : ''}`}
+              onClick={() => setTimeRange(range.value)}
+            >
+              {range.label}
+            </button>
+          ))}
         </div>
       </div>
       <div className="chart-container">

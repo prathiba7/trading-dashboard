@@ -2,6 +2,8 @@ import { Ticker, TickerInfo, HistoricalDataPoint } from '../types';
 
 export class MarketDataService {
   private tickers: Map<string, Ticker> = new Map();
+  private cache: Map<string, { data: HistoricalDataPoint[], timestamp: number }> = new Map();
+  private readonly CACHE_TTL = 30000; // 30 seconds
   private readonly tickerInfos: TickerInfo[] = [
     { symbol: 'AAPL', name: 'Apple Inc.' },
     { symbol: 'TSLA', name: 'Tesla Inc.' },
@@ -69,16 +71,23 @@ export class MarketDataService {
     return updated;
   }
 
-  getHistoricalData(symbol: string, points: number = 50): HistoricalDataPoint[] {
+  getHistoricalData(symbol: string, minutes: number = 60): HistoricalDataPoint[] {
+    const cacheKey = `${symbol}_${minutes}`;
+    const cached = this.cache.get(cacheKey);
+    
+    if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
+      return cached.data;
+    }
+
     const ticker = this.tickers.get(symbol);
     if (!ticker) return [];
 
     const data: HistoricalDataPoint[] = [];
     const now = Date.now();
-    const interval = 60000;
+    const interval = (minutes * 60000) / 50; // 50 data points
     let price = ticker.price * 0.95;
 
-    for (let i = points - 1; i >= 0; i--) {
+    for (let i = 49; i >= 0; i--) {
       const volatility = symbol === 'BTC-USD' ? 0.01 : 0.005;
       price = price * (1 + (Math.random() - 0.5) * volatility);
       
@@ -89,6 +98,7 @@ export class MarketDataService {
       });
     }
 
+    this.cache.set(cacheKey, { data, timestamp: Date.now() });
     return data;
   }
 }

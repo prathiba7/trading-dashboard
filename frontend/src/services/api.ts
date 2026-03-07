@@ -8,8 +8,8 @@ function getAuthHeaders(): HeadersInit {
   return auth ? { 'Authorization': `Bearer ${auth.token}` } : {};
 }
 
-export async function fetchHistoricalData(symbol: string, points: number = 50): Promise<HistoricalDataPoint[]> {
-  const response = await fetch(`${API_URL}/historical/${symbol}?points=${points}`, {
+export async function fetchHistoricalData(symbol: string, minutes: number = 60): Promise<HistoricalDataPoint[]> {
+  const response = await fetch(`${API_URL}/historical/${symbol}?minutes=${minutes}`, {
     headers: getAuthHeaders()
   });
   if (!response.ok) {
