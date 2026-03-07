@@ -1,4 +1,4 @@
-# Real-Time Trading Dashboard
+# LiveTracker - Real-Time Trading Dashboard
 
 A full-stack application for displaying live ticker prices and interactive charts for financial instruments.
 

@@ -34,7 +34,7 @@ export function HomePage({ tickers, onSelectTicker }: HomePageProps) {
   return (
     <div className="home-page">
       <div className="hero-section">
-        <h1>Welcome to Trading Dashboard</h1>
+        <h1>Welcome to LiveTracker</h1>
         <p>Real-time market data and analytics at your fingertips</p>
       </div>
 

@@ -41,7 +41,7 @@ export function Signup({ onSignup, onSwitchToLogin, error }: SignupProps) {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h1>Trading Dashboard</h1>
+        <h1>LiveTracker</h1>
         <p className="login-subtitle">Create your account</p>
         
         <form onSubmit={handleSubmit}>

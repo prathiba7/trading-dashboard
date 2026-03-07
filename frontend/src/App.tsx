@@ -88,7 +88,7 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Trading Dashboard</h1>
+        <h1>LiveTracker</h1>
         <div className="header-right">
           <span className="username">Welcome, {user.username}</span>
           <div className={`connection-status ${connected ? 'connected' : 'disconnected'}`}>
