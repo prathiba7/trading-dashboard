@@ -4,13 +4,27 @@ import { getStoredAuth } from '../services/auth';
 
 const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:3001/ws';
 
+interface TriggeredAlert {
+  id: string;
+  symbol: string;
+  condition: 'above' | 'below';
+  threshold: number;
+  currentPrice: number;
+  triggeredAt: number;
+}
+
 export function useWebSocket(enabled: boolean = true) {
   const [tickers, setTickers] = useState<Map<string, Ticker>>(new Map());
   const [connected, setConnected] = useState(false);
+  const [alerts, setAlerts] = useState<TriggeredAlert[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     if (!enabled) return;
+
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
 
     const auth = getStoredAuth();
     if (!auth) return;
@@ -35,6 +49,18 @@ export function useWebSocket(enabled: boolean = true) {
             });
             return updated;
           });
+        } else if (message.type === 'alert') {
+          const triggered = message.data;
+          setAlerts(prev => [...prev, ...triggered]);
+          
+          triggered.forEach((alert: any) => {
+            if ('Notification' in window && Notification.permission === 'granted') {
+              new Notification('Price Alert Triggered!', {
+                body: `${alert.symbol} is ${alert.condition} $${alert.threshold}. Current: $${alert.currentPrice.toFixed(2)}`,
+              });
+            }
+            console.log('Alert triggered:', alert);
+          });
         }
       };
 
@@ -58,5 +84,5 @@ export function useWebSocket(enabled: boolean = true) {
     };
   }, [enabled]);
 
-  return { tickers: Array.from(tickers.values()), connected };
+  return { tickers: Array.from(tickers.values()), connected, alerts };
 }

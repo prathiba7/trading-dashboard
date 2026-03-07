@@ -18,13 +18,35 @@ export interface PriceAlert {
 
 export const alertApi = {
   async createAlert(symbol: string, condition: 'above' | 'below', threshold: number): Promise<PriceAlert> {
-    const response = await fetch(`${API_URL}/alerts`, {
-      method: 'POST',
-      headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
-      body: JSON.stringify({ symbol, condition, threshold })
-    });
-    if (!response.ok) throw new Error('Failed to create alert');
-    return response.json();
+    try {
+      const auth = getStoredAuth();
+      console.log('Auth token:', auth?.token ? 'Present' : 'Missing');
+      
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(auth ? { 'Authorization': `Bearer ${auth.token}` } : {})
+      };
+      
+      console.log('Creating alert with headers:', headers);
+      
+      const response = await fetch(`${API_URL}/alerts`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ symbol, condition, threshold })
+      });
+      
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || `HTTP ${response.status}`);
+      }
+      
+      return response.json();
+    } catch (err: any) {
+      console.error('Alert API error:', err);
+      throw err;
+    }
   },
 
   async getAlerts(): Promise<PriceAlert[]> {

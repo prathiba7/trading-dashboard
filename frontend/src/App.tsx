@@ -4,6 +4,7 @@ import { HomePage } from './components/HomePage';
 import { TradeDetail } from './components/TradeDetail';
 import { Login } from './components/Login';
 import { Signup } from './components/Signup';
+import { Toast } from './components/Toast';
 import { authApi, getStoredAuth, setStoredAuth, clearStoredAuth, User } from './services/auth';
 import './App.css';
 
@@ -11,8 +12,9 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
   const [showSignup, setShowSignup] = useState(false);
-  const { tickers, connected } = useWebSocket(!!user);
+  const { tickers, connected, alerts } = useWebSocket(!!user);
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const stored = getStoredAuth();
@@ -20,6 +22,13 @@ function App() {
       setUser(stored);
     }
   }, []);
+
+  useEffect(() => {
+    if (alerts.length > 0) {
+      const latest = alerts[alerts.length - 1];
+      setToastMessage(`🔔 ${latest.symbol} is ${latest.condition} $${latest.threshold}! Current: $${latest.currentPrice.toFixed(2)}`);
+    }
+  }, [alerts]);
 
   const handleLogin = async (username: string, password: string) => {
     try {
@@ -101,6 +110,14 @@ function App() {
           />
         )}
       </main>
+      
+      {toastMessage && (
+        <Toast 
+          message={toastMessage} 
+          type="info" 
+          onClose={() => setToastMessage(null)} 
+        />
+      )}
     </div>
   );
 }

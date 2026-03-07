@@ -100,12 +100,20 @@ export function createApiRoutes(marketData: MarketDataService, alertService: Ale
     const { symbol, condition, threshold } = req.body;
     const username = (req as any).username;
 
+    console.log('Creating alert:', { username, symbol, condition, threshold });
+
     if (!symbol || !condition || threshold === undefined) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const alert = alertService.createAlert(username, symbol, condition, parseFloat(threshold));
-    res.json(alert);
+    try {
+      const alert = alertService.createAlert(username, symbol, condition, parseFloat(threshold));
+      console.log('Alert created successfully:', alert);
+      res.json(alert);
+    } catch (err: any) {
+      console.error('Error creating alert:', err);
+      res.status(500).json({ error: err.message || 'Failed to create alert' });
+    }
   });
 
   router.get('/alerts', authMiddleware, (req: Request, res: Response) => {

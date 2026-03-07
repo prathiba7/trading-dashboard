@@ -1,20 +1,34 @@
 import { WebSocketServer, WebSocket } from 'ws';
 import { Server } from 'http';
 import { MarketDataService } from './marketData';
+import { AlertService } from './alerts';
 
 export class WebSocketService {
   private wss: WebSocketServer;
   private marketData: MarketDataService;
+  private alertService: AlertService;
   private updateInterval: NodeJS.Timeout | null = null;
+  private clientUsers: Map<WebSocket, string> = new Map();
 
-  constructor(server: Server, marketData: MarketDataService) {
+  constructor(server: Server, marketData: MarketDataService, alertService: AlertService) {
     this.wss = new WebSocketServer({ server, path: '/ws' });
     this.marketData = marketData;
+    this.alertService = alertService;
     this.setupWebSocket();
   }
 
   private setupWebSocket(): void {
-    this.wss.on('connection', (ws: WebSocket) => {
+    this.wss.on('connection', (ws: WebSocket, req) => {
+      const url = new URL(req.url || '', `http://${req.headers.host}`);
+      const token = url.searchParams.get('token');
+      
+      if (token) {
+        const username = this.extractUsernameFromToken(token);
+        if (username) {
+          this.clientUsers.set(ws, username);
+        }
+      }
+
       console.log('Client connected');
 
       ws.send(JSON.stringify({
@@ -23,6 +37,7 @@ export class WebSocketService {
       }));
 
       ws.on('close', () => {
+        this.clientUsers.delete(ws);
         console.log('Client disconnected');
       });
 
@@ -32,11 +47,32 @@ export class WebSocketService {
     });
   }
 
+  private extractUsernameFromToken(token: string): string | null {
+    const parts = token.split('_');
+    return parts.length >= 2 ? parts[1] : null;
+  }
+
   startBroadcasting(intervalMs: number = 1000): void {
     if (this.updateInterval) return;
 
     this.updateInterval = setInterval(() => {
       const updates = this.marketData.updatePrices();
+      
+      updates.forEach(ticker => {
+        this.wss.clients.forEach((client) => {
+          const username = this.clientUsers.get(client);
+          if (username && client.readyState === WebSocket.OPEN) {
+            const triggered = this.alertService.checkAlerts(username, ticker.symbol, ticker.price);
+            if (triggered.length > 0) {
+              client.send(JSON.stringify({
+                type: 'alert',
+                data: triggered
+              }));
+            }
+          }
+        });
+      });
+
       this.broadcast({
         type: 'update',
         data: updates

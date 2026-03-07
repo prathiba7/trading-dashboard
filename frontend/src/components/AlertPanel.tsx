@@ -32,12 +32,14 @@ export function AlertPanel({ ticker }: AlertPanelProps) {
     
     setLoading(true);
     try {
-      await alertApi.createAlert(ticker.symbol, condition, parseFloat(threshold));
+      const result = await alertApi.createAlert(ticker.symbol, condition, parseFloat(threshold));
+      console.log('Alert created:', result);
       setThreshold('');
       setShowForm(false);
       await loadAlerts();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to create alert:', err);
+      alert(`Failed to create alert: ${err.message}`);
     }
     setLoading(false);
   };

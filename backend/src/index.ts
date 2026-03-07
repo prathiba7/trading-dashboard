@@ -16,7 +16,7 @@ app.use(express.json());
 
 const marketData = new MarketDataService();
 const alertService = new AlertService();
-const wsService = new WebSocketService(server, marketData);
+const wsService = new WebSocketService(server, marketData, alertService);
 
 app.use('/api', createApiRoutes(marketData, alertService));
 
