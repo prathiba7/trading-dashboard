@@ -3,7 +3,12 @@ export interface User {
   token: string;
 }
 
-const MOCK_USERS = [
+interface StoredUser {
+  username: string;
+  password: string;
+}
+
+const MOCK_USERS: StoredUser[] = [
   { username: 'admin', password: 'admin123' },
   { username: 'trader', password: 'trader123' },
   { username: 'demo', password: 'demo' }
@@ -19,6 +24,19 @@ export class AuthService {
       return null;
     }
 
+    const token = `token_${username}_${Date.now()}`;
+    activeSessions.set(token, username);
+
+    return { username, token };
+  }
+
+  signup(username: string, password: string): User | null {
+    if (MOCK_USERS.find(u => u.username === username)) {
+      return null;
+    }
+
+    MOCK_USERS.push({ username, password });
+    
     const token = `token_${username}_${Date.now()}`;
     activeSessions.set(token, username);
 

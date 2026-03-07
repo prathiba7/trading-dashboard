@@ -22,6 +22,30 @@ export function createApiRoutes(marketData: MarketDataService): Router {
     res.json(user);
   });
 
+  router.post('/signup', (req: Request, res: Response) => {
+    const { username, password } = req.body;
+    
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Username and password required' });
+    }
+
+    if (username.length < 3) {
+      return res.status(400).json({ error: 'Username must be at least 3 characters' });
+    }
+
+    if (password.length < 4) {
+      return res.status(400).json({ error: 'Password must be at least 4 characters' });
+    }
+
+    const user = authService.signup(username, password);
+    
+    if (!user) {
+      return res.status(409).json({ error: 'Username already exists' });
+    }
+
+    res.json(user);
+  });
+
   router.post('/logout', (req: Request, res: Response) => {
     const token = req.headers.authorization?.replace('Bearer ', '');
     

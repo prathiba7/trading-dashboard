@@ -3,12 +3,14 @@ import { useWebSocket } from './hooks/useWebSocket';
 import { TickerList } from './components/TickerList';
 import { PriceChart } from './components/PriceChart';
 import { Login } from './components/Login';
+import { Signup } from './components/Signup';
 import { authApi, getStoredAuth, setStoredAuth, clearStoredAuth, User } from './services/auth';
 import './App.css';
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [showSignup, setShowSignup] = useState(false);
   const { tickers, connected } = useWebSocket(!!user);
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
 
@@ -30,6 +32,17 @@ function App() {
     }
   };
 
+  const handleSignup = async (username: string, password: string) => {
+    try {
+      setAuthError(null);
+      const userData = await authApi.signup(username, password);
+      setStoredAuth(userData);
+      setUser(userData);
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'Signup failed');
+    }
+  };
+
   const handleLogout = async () => {
     if (user) {
       await authApi.logout(user.token);
@@ -40,7 +53,19 @@ function App() {
   };
 
   if (!user) {
-    return <Login onLogin={handleLogin} error={authError} />;
+    return showSignup ? (
+      <Signup 
+        onSignup={handleSignup} 
+        onSwitchToLogin={() => { setShowSignup(false); setAuthError(null); }}
+        error={authError} 
+      />
+    ) : (
+      <Login 
+        onLogin={handleLogin} 
+        onSwitchToSignup={() => { setShowSignup(true); setAuthError(null); }}
+        error={authError} 
+      />
+    );
   }
 
   const selectedTicker = tickers.find(t => t.symbol === selectedSymbol);

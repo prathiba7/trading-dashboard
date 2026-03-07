@@ -3,10 +3,11 @@ import './Login.css';
 
 interface LoginProps {
   onLogin: (username: string, password: string) => Promise<void>;
+  onSwitchToSignup: () => void;
   error: string | null;
 }
 
-export function Login({ onLogin, error }: LoginProps) {
+export function Login({ onLogin, onSwitchToSignup, error }: LoginProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -53,6 +54,13 @@ export function Login({ onLogin, error }: LoginProps) {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
+
+        <div className="switch-auth">
+          Don't have an account?{' '}
+          <button className="link-btn" onClick={onSwitchToSignup} disabled={loading}>
+            Sign Up
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -21,6 +21,21 @@ export const authApi = {
     return response.json();
   },
 
+  async signup(username: string, password: string): Promise<User> {
+    const response = await fetch(`${API_URL}/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Signup failed');
+    }
+
+    return response.json();
+  },
+
   async logout(token: string): Promise<void> {
     await fetch(`${API_URL}/logout`, {
       method: 'POST',
