@@ -1,0 +1,71 @@
+.ticker-list {
+  padding: 20px;
+}
+
+.ticker-list h2 {
+  margin: 0 0 20px 0;
+  color: #333;
+}
+
+.ticker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.ticker-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ticker-card:hover {
+  border-color: #2196F3;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.ticker-card.selected {
+  border-color: #2196F3;
+  background: #e3f2fd;
+}
+
+.ticker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.ticker-symbol {
+  font-weight: bold;
+  font-size: 18px;
+  color: #333;
+}
+
+.ticker-name {
+  font-size: 12px;
+  color: #666;
+}
+
+.ticker-price {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin: 10px 0;
+}
+
+.ticker-change {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ticker-change.positive {
+  color: #4caf50;
+}
+
+.ticker-change.negative {
+  color: #f44336;
+}
