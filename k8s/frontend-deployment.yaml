@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trading-frontend
+  labels:
+    app: trading-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: trading-frontend
+  template:
+    metadata:
+      labels:
+        app: trading-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: trading-frontend:latest
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trading-frontend
+spec:
+  selector:
+    app: trading-frontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
