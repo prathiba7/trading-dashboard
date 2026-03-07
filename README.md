@@ -13,16 +13,22 @@ A full-stack application for displaying live ticker prices and interactive chart
 
 ### Backend
 - **Authentication**: Mocked user authentication with token-based sessions
+- **User Registration**: Sign up functionality with validation
+- **Price Alerts**: Set threshold alerts for price movements
 - WebSocket server for real-time price streaming
 - RESTful API for ticker data and historical prices
+- **Caching**: 30-second cache for historical data
 - Mock market data generator with realistic volatility
 - Clean architecture with separation of concerns
 - Unit tests with Jest
 
 ### Frontend
-- **Login Page**: Secure authentication with session persistence
+- **Login & Signup Pages**: Secure authentication with session persistence
+- **Price Alerts**: Create alerts for above/below price thresholds
+- **Time Range Selector**: View 5min, 15min, 30min, 1hour charts
 - Real-time ticker list with live price updates
 - Interactive price charts using Chart.js
+- **Enhanced UI**: Gradients, animations, and modern design
 - Responsive design for mobile and desktop
 - WebSocket client with auto-reconnection
 - TypeScript for type safety
@@ -35,11 +41,14 @@ trading-dashboard/
 │   ├── src/
 │   │   ├── services/
 │   │   │   ├── marketData.ts
-│   │   │   └── websocket.ts
+│   │   │   ├── websocket.ts
+│   │   │   ├── auth.ts
+│   │   │   └── alerts.ts
 │   │   ├── routes/
 │   │   │   └── api.ts
 │   │   ├── __tests__/
-│   │   │   └── marketData.test.ts
+│   │   │   ├── marketData.test.ts
+│   │   │   └── auth.test.ts
 │   │   ├── types.ts
 │   │   └── index.ts
 │   ├── Dockerfile
@@ -47,12 +56,18 @@ trading-dashboard/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── TickerList.tsx
-│   │   │   └── PriceChart.tsx
+│   │   │   ├── HomePage.tsx
+│   │   │   ├── TradeDetail.tsx
+│   │   │   ├── Login.tsx
+│   │   │   ├── Signup.tsx
+│   │   │   ├── PriceChart.tsx
+│   │   │   └── AlertPanel.tsx
 │   │   ├── hooks/
 │   │   │   └── useWebSocket.ts
 │   │   ├── services/
-│   │   │   └── api.ts
+│   │   │   ├── api.ts
+│   │   │   ├── auth.ts
+│   │   │   └── alertApi.ts
 │   │   ├── App.tsx
 │   │   └── main.tsx
 │   ├── Dockerfile
@@ -97,15 +112,45 @@ docker-compose up --build
 
 Access the app at http://localhost:3000
 
+## Key Features
+
+### 🔐 Authentication System
+- Login and signup with form validation
+- Session persistence with localStorage
+- Protected routes and API endpoints
+- Token-based authentication
+
+### 📊 Real-Time Trading Dashboard
+- Live price updates via WebSocket
+- 5 major tickers (AAPL, TSLA, BTC-USD, GOOGL, MSFT)
+- Interactive charts with Chart.js
+- Multiple time ranges (5min, 15min, 30min, 1hour)
+
+### 🔔 Price Alerts
+- Set alerts for price thresholds
+- Above/below conditions
+- Visual indicators for triggered alerts
+- Per-ticker alert management
+
+### ⚡ Performance
+- Historical data caching (30s TTL)
+- Efficient WebSocket broadcasting
+- Optimized re-renders with React hooks
+- Responsive and animated UI
+
 ## API Documentation
 
 ### REST Endpoints
 
 - `POST /api/login` - Authenticate user and get token
+- `POST /api/signup` - Register new user
 - `POST /api/logout` - Logout and invalidate token
 - `GET /api/tickers` - List all available tickers (requires auth)
 - `GET /api/tickers/:symbol` - Get current price for a ticker (requires auth)
-- `GET /api/historical/:symbol?points=50` - Get historical data (requires auth)
+- `GET /api/historical/:symbol?minutes=60` - Get historical data with time range (requires auth)
+- `POST /api/alerts` - Create price alert (requires auth)
+- `GET /api/alerts` - Get user's alerts (requires auth)
+- `DELETE /api/alerts/:id` - Delete alert (requires auth)
 - `GET /api/health` - Health check
 
 ### WebSocket
@@ -178,11 +223,15 @@ npm test -- --coverage
 
 ## Future Enhancements
 
-- User authentication with JWT
-- Redis caching for historical data
-- Price threshold alerts
-- Multiple chart timeframes
+- Real-time alert notifications via WebSocket
+- Email/SMS notifications for triggered alerts
+- Advanced charting with technical indicators
+- Portfolio tracking and management
 - Trade execution simulation
+- Historical alert analytics
+- Multi-user chat for traders
+- Dark mode theme
+- Export data to CSV/Excel
 - Kubernetes deployment manifests
 - End-to-end tests with Playwright
 

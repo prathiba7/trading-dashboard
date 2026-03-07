@@ -83,21 +83,16 @@ body {
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .chart-section {
   margin-top: 20px;
-}
-
-.empty-state {
-  margin-top: 40px;
-  text-align: center;
-  color: #666;
-  font-size: 18px;
-  padding: 60px 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 @media (max-width: 768px) {

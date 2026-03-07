@@ -3,6 +3,7 @@ import cors from 'cors';
 import { createServer } from 'http';
 import { MarketDataService } from './services/marketData';
 import { WebSocketService } from './services/websocket';
+import { AlertService } from './services/alerts';
 import { createApiRoutes } from './routes/api';
 
 const PORT = process.env.PORT || 3001;
@@ -14,9 +15,10 @@ app.use(cors());
 app.use(express.json());
 
 const marketData = new MarketDataService();
+const alertService = new AlertService();
 const wsService = new WebSocketService(server, marketData);
 
-app.use('/api', createApiRoutes(marketData));
+app.use('/api', createApiRoutes(marketData, alertService));
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

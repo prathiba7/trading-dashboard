@@ -1,8 +1,9 @@
 import { Router, Request, Response } from 'express';
 import { MarketDataService } from '../services/marketData';
 import { AuthService } from '../services/auth';
+import { AlertService } from '../services/alerts';
 
-export function createApiRoutes(marketData: MarketDataService): Router {
+export function createApiRoutes(marketData: MarketDataService, alertService: AlertService): Router {
   const router = Router();
   const authService = new AuthService();
 
@@ -63,6 +64,7 @@ export function createApiRoutes(marketData: MarketDataService): Router {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    (req as any).username = authService.validateToken(token);
     next();
   };
 
@@ -83,15 +85,46 @@ export function createApiRoutes(marketData: MarketDataService): Router {
 
   router.get('/historical/:symbol', authMiddleware, (req: Request, res: Response) => {
     const { symbol } = req.params;
-    const points = parseInt(req.query.points as string) || 50;
+    const minutes = parseInt(req.query.minutes as string) || 60;
     
-    const data = marketData.getHistoricalData(symbol, points);
+    const data = marketData.getHistoricalData(symbol, minutes);
     
     if (data.length === 0) {
       return res.status(404).json({ error: 'Ticker not found' });
     }
     
     res.json(data);
+  });
+
+  router.post('/alerts', authMiddleware, (req: Request, res: Response) => {
+    const { symbol, condition, threshold } = req.body;
+    const username = (req as any).username;
+
+    if (!symbol || !condition || threshold === undefined) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const alert = alertService.createAlert(username, symbol, condition, parseFloat(threshold));
+    res.json(alert);
+  });
+
+  router.get('/alerts', authMiddleware, (req: Request, res: Response) => {
+    const username = (req as any).username;
+    const alerts = alertService.getUserAlerts(username);
+    res.json(alerts);
+  });
+
+  router.delete('/alerts/:id', authMiddleware, (req: Request, res: Response) => {
+    const username = (req as any).username;
+    const { id } = req.params;
+    
+    const deleted = alertService.deleteAlert(username, id);
+    
+    if (!deleted) {
+      return res.status(404).json({ error: 'Alert not found' });
+    }
+
+    res.json({ success: true });
   });
 
   router.get('/health', (_req: Request, res: Response) => {

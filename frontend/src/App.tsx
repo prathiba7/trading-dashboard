@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useWebSocket } from './hooks/useWebSocket';
-import { TickerList } from './components/TickerList';
-import { PriceChart } from './components/PriceChart';
+import { HomePage } from './components/HomePage';
+import { TradeDetail } from './components/TradeDetail';
 import { Login } from './components/Login';
 import { Signup } from './components/Signup';
 import { authApi, getStoredAuth, setStoredAuth, clearStoredAuth, User } from './services/auth';
@@ -52,6 +52,14 @@ function App() {
     }
   };
 
+  const handleSelectTicker = (symbol: string) => {
+    setSelectedSymbol(symbol);
+  };
+
+  const handleBackToHome = () => {
+    setSelectedSymbol(null);
+  };
+
   if (!user) {
     return showSignup ? (
       <Signup 
@@ -84,22 +92,13 @@ function App() {
       </header>
 
       <main className="app-main">
-        <TickerList
-          tickers={tickers}
-          selectedSymbol={selectedSymbol}
-          onSelectTicker={setSelectedSymbol}
-        />
-
-        {selectedTicker && (
-          <div className="chart-section">
-            <PriceChart ticker={selectedTicker} />
-          </div>
-        )}
-
-        {!selectedTicker && tickers.length > 0 && (
-          <div className="empty-state">
-            <p>Select a ticker to view its chart</p>
-          </div>
+        {!selectedSymbol ? (
+          <HomePage tickers={tickers} onSelectTicker={handleSelectTicker} />
+        ) : (
+          <TradeDetail 
+            ticker={tickers.find(t => t.symbol === selectedSymbol)!} 
+            onBack={handleBackToHome}
+          />
         )}
       </main>
     </div>
