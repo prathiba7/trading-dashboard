@@ -85,8 +85,6 @@ function App() {
     );
   }
 
-  const selectedTicker = tickers.find(t => t.symbol === selectedSymbol);
-
   return (
     <div className="app">
       <header className="app-header">
@@ -103,12 +101,12 @@ function App() {
       <main className="app-main">
         {!selectedSymbol ? (
           <HomePage tickers={tickers} onSelectTicker={handleSelectTicker} />
-        ) : (
+        ) : selectedSymbol && tickers.find(t => t.symbol === selectedSymbol) ? (
           <TradeDetail 
             ticker={tickers.find(t => t.symbol === selectedSymbol)!} 
             onBack={handleBackToHome}
           />
-        )}
+        ) : null}
       </main>
       
       {toastMessage && (

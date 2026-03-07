@@ -15,7 +15,7 @@ export function HomePage({ tickers, onSelectTicker }: HomePageProps) {
   const miniChartData = (ticker: Ticker) => ({
     labels: Array(10).fill(''),
     datasets: [{
-      data: Array(10).fill(0).map((_, i) => ticker.price * (1 + (Math.random() - 0.5) * 0.02)),
+      data: Array(10).fill(0).map(() => ticker.price * (1 + (Math.random() - 0.5) * 0.02)),
       borderColor: ticker.change >= 0 ? '#4caf50' : '#f44336',
       borderWidth: 2,
       fill: false,
