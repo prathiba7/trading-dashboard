@@ -2,15 +2,6 @@
 
 A full-stack application for displaying live ticker prices and interactive charts for financial instruments.
 
-## Architecture
-
-- **Backend**: Node.js + TypeScript + Express + WebSocket
-- **Frontend**: React + TypeScript + Vite + Chart.js
-- **Containerization**: Docker + Docker Compose
-- **Testing**: Jest for backend unit tests
-
-## Features
-
 ### Backend
 - **Authentication**: Mocked user authentication with token-based sessions
 - **User Registration**: Sign up functionality with validation
@@ -190,17 +181,17 @@ npm test -- --coverage
 ## Assumptions & Trade-offs
 
 ### Assumptions
-- Mock data is sufficient for demonstration
+- Mock data is used 
 - 1-second update interval for price changes
 - 50 historical data points provide adequate chart detail
-- Single WebSocket connection per client is acceptable
+- Single WebSocket connection per client 
 
 ### Trade-offs
 - **Mock Data**: Used simulated market data instead of real API to avoid external dependencies
 - **Mock Authentication**: Simple token-based auth for demonstration (no JWT, no encryption)
 - **In-Memory Storage**: No database for simplicity; prices and sessions reset on restart
 - **Single Server**: No load balancing or horizontal scaling in base implementation
-- **Limited Error Handling**: Basic error handling; production would need more robust handling
+- **Limited Error Handling**: Basic error handling provided
 
 ## Technology Choices
 
@@ -234,7 +225,3 @@ npm test -- --coverage
 - Export data to CSV/Excel
 - Kubernetes deployment manifests
 - End-to-end tests with Playwright
-
-## License
-
-MIT
