@@ -12,6 +12,7 @@ A full-stack application for displaying live ticker prices and interactive chart
 ## Features
 
 ### Backend
+- **Authentication**: Mocked user authentication with token-based sessions
 - WebSocket server for real-time price streaming
 - RESTful API for ticker data and historical prices
 - Mock market data generator with realistic volatility
@@ -19,6 +20,7 @@ A full-stack application for displaying live ticker prices and interactive chart
 - Unit tests with Jest
 
 ### Frontend
+- **Login Page**: Secure authentication with session persistence
 - Real-time ticker list with live price updates
 - Interactive price charts using Chart.js
 - Responsive design for mobile and desktop
@@ -60,6 +62,13 @@ trading-dashboard/
 
 ## Quick Start
 
+### Demo Credentials
+```
+Username: admin    | Password: admin123
+Username: trader   | Password: trader123
+Username: demo     | Password: demo
+```
+
 ### Prerequisites
 - Node.js 18+
 - npm or yarn
@@ -92,14 +101,16 @@ Access the app at http://localhost:3000
 
 ### REST Endpoints
 
-- `GET /api/tickers` - List all available tickers
-- `GET /api/tickers/:symbol` - Get current price for a ticker
-- `GET /api/historical/:symbol?points=50` - Get historical data
+- `POST /api/login` - Authenticate user and get token
+- `POST /api/logout` - Logout and invalidate token
+- `GET /api/tickers` - List all available tickers (requires auth)
+- `GET /api/tickers/:symbol` - Get current price for a ticker (requires auth)
+- `GET /api/historical/:symbol?points=50` - Get historical data (requires auth)
 - `GET /api/health` - Health check
 
 ### WebSocket
 
-Connect to `ws://localhost:3001/ws` for real-time updates.
+Connect to `ws://localhost:3001/ws?token=<your_token>` for real-time updates.
 
 Message format:
 ```json
@@ -141,8 +152,8 @@ npm test -- --coverage
 
 ### Trade-offs
 - **Mock Data**: Used simulated market data instead of real API to avoid external dependencies
-- **No Authentication**: Skipped auth to focus on core functionality (can be added as bonus)
-- **In-Memory Storage**: No database for simplicity; prices reset on restart
+- **Mock Authentication**: Simple token-based auth for demonstration (no JWT, no encryption)
+- **In-Memory Storage**: No database for simplicity; prices and sessions reset on restart
 - **Single Server**: No load balancing or horizontal scaling in base implementation
 - **Limited Error Handling**: Basic error handling; production would need more robust handling
 

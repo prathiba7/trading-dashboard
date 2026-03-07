@@ -27,6 +27,32 @@ body {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.username {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.logout-btn {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.logout-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
 .app-header h1 {
   margin: 0;
   font-size: 28px;

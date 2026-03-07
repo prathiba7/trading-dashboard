@@ -1,16 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { Ticker } from '../types';
+import { getStoredAuth } from '../services/auth';
 
 const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:3001/ws';
 
-export function useWebSocket() {
+export function useWebSocket(enabled: boolean = true) {
   const [tickers, setTickers] = useState<Map<string, Ticker>>(new Map());
   const [connected, setConnected] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
+    if (!enabled) return;
+
+    const auth = getStoredAuth();
+    if (!auth) return;
+
     const connect = () => {
-      const ws = new WebSocket(WS_URL);
+      const ws = new WebSocket(`${WS_URL}?token=${auth.token}`);
       wsRef.current = ws;
 
       ws.onopen = () => {
@@ -50,7 +56,7 @@ export function useWebSocket() {
         wsRef.current.close();
       }
     };
-  }, []);
+  }, [enabled]);
 
   return { tickers: Array.from(tickers.values()), connected };
 }
