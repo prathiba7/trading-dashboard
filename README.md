@@ -1,7 +1,7 @@
 # LiveTracker - Real-Time Trading Dashboard
 
 A full-stack application for displaying live ticker prices and interactive charts for financial instruments.
-
+Use this live url for demo: https://trading-dashboard-1-a7r2.onrender.com
 ### Backend
 - **Authentication**: Mocked user authentication with token-based sessions
 - **User Registration**: Sign up functionality with validation
