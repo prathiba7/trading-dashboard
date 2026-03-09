@@ -20,7 +20,7 @@ const wsService = new WebSocketService(server, marketData, alertService);
 
 app.use('/api', createApiRoutes(marketData, alertService));
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
   wsService.startBroadcasting(1000);
 });
