@@ -6,7 +6,7 @@ import { WebSocketService } from './services/websocket';
 import { AlertService } from './services/alerts';
 import { createApiRoutes } from './routes/api';
 
-const PORT = process.env.PORT || 3001;
+const PORT = parseInt(process.env.PORT || '3001', 10);
 
 const app = express();
 const server = createServer(app);
@@ -20,7 +20,7 @@ const wsService = new WebSocketService(server, marketData, alertService);
 
 app.use('/api', createApiRoutes(marketData, alertService));
 
-server.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   wsService.startBroadcasting(1000);
 });
