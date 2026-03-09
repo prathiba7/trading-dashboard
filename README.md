@@ -2,6 +2,8 @@
 
 A full-stack application for displaying live ticker prices and interactive charts for financial instruments.
 Use this live url for demo: https://trading-dashboard-1-a7r2.onrender.com
+
+(Use the credential given in the following [section](https://github.com/prathiba7/trading-dashboard/edit/main/README.md#demo-credentials) for login)
 ### Backend
 - **Authentication**: Mocked user authentication with token-based sessions
 - **User Registration**: Sign up functionality with validation
